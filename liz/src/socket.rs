@@ -14,7 +14,7 @@ pub async fn send_command(command: &str, args: &Vec<String>) -> tokio::io::Resul
 }
 
 pub async fn _send_command(mut cmd: LizCommand) -> tokio::io::Result<()> {
-    let socket_path: &str = "/tmp/rust_daemon.sock";
+    let socket_path: &str = "/tmp/bluebird_daemon.sock";
     
     let mut socket: UnixStream;
 

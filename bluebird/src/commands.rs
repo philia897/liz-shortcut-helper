@@ -7,7 +7,8 @@ use crate::tools::{db::{DataTable, UserDataTable}, exec::execute_shortcut_ydotoo
 pub struct Flute {
     pub music_sheet : DataTable,
     pub music_sheet_path : String,
-    pub keymap_file : String
+    pub keymap_file : String,
+    pub sheet_dir : String
 }
 
 impl Flute {
@@ -39,15 +40,18 @@ impl Flute {
     }
     
     fn reload(&mut self, cmd: &LizCommand) -> BlueBirdResponse {
+        let user_data_path: &String;
         if cmd.args.is_empty() {
-            eprintln!("BUG: Empty args, expect one path string on args[0]");
-            return BlueBirdResponse {
-                code : StateCode::FAIL,
-                results : vec!["Failure:".to_string(), "Empty args:".to_string(), "Expect one path string".to_string()]
-            }
+            // eprintln!("BUG: Empty args, expect one path string on args[0]");
+            // return BlueBirdResponse {
+            //     code : StateCode::FAIL,
+            //     results : vec!["Failure:".to_string(), "Empty args:".to_string(), "Expect one path string".to_string()]
+            // }
+            user_data_path = &self.sheet_dir;
+        } else {
+            user_data_path = &cmd.args[0];
         }
-        let user_data_path: &String = &cmd.args[0];
-        match UserDataTable::import_from_json(&user_data_path) {
+        match UserDataTable::import_from(&user_data_path) {
             Ok(user_data) => {
                 self.music_sheet = user_data.transform_to_data_table(&self.music_sheet,&self.keymap_file).expect("222");
             }

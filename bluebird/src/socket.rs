@@ -7,14 +7,11 @@ use signal_hook::iterator::Signals;
 use tokio::net::UnixListener;
 use tokio::io::{AsyncReadExt, AsyncWriteExt};
 use crate::commands::Flute;
+use crate::rhythm::Rhythm;
 use crate::tools::db::DataTable;
 use andthe::{BlueBirdResponse, LizCommand, StateCode};
 
-pub struct  Rhythm {
-    pub socket_path : String,
-    pub music_sheet_path : String,
-    pub keymap_path : String
-}
+
 
 pub async fn start_daemon(rhythm : &Rhythm) -> tokio::io::Result<()> {
     let socket_path: &String = &rhythm.socket_path;
@@ -22,7 +19,8 @@ pub async fn start_daemon(rhythm : &Rhythm) -> tokio::io::Result<()> {
     let mut flute: Flute = Flute {
         music_sheet : DataTable::import_from_json(&rhythm.music_sheet_path).expect("Failed to initialize the music_sheet"),
         keymap_file : rhythm.keymap_path.clone(),
-        music_sheet_path : rhythm.music_sheet_path.clone()
+        music_sheet_path : rhythm.music_sheet_path.clone(),
+        sheet_dir : rhythm.user_sheets_path.clone()
     };
     flute.calibrate();
 
@@ -32,7 +30,7 @@ pub async fn start_daemon(rhythm : &Rhythm) -> tokio::io::Result<()> {
     let _ = std::fs::remove_file(socket_path);
 
     let listener: UnixListener = UnixListener::bind(socket_path).expect("Could not bind to socket");
-    println!("Daemon started, waiting for requests...");
+    println!("A blue bird is listening...");
 
     let serious_error_response: Vec<u8> = BlueBirdResponse {
         code : StateCode::FAIL,
@@ -44,6 +42,8 @@ pub async fn start_daemon(rhythm : &Rhythm) -> tokio::io::Result<()> {
         let mut buffer: Vec<u8> = vec![0u8; 1024];
         let n: usize = socket.read(&mut buffer).await?;
         if let Some(request) = LizCommand::deserialize(&buffer[..n]) {
+
+            println!("Hear command: {:?}", request);
 
             let response: BlueBirdResponse  = flute.play(&request);
     

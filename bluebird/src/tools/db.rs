@@ -1,5 +1,5 @@
 use std::collections::HashMap;
-use std::fs::{File, OpenOptions};
+use std::fs::{self, File, OpenOptions};
 use std::io::{Read, Write};
 use std::error::Error;
 use serde::{Deserialize, Serialize};
@@ -162,11 +162,48 @@ impl UserDataTable {
         Self { data: Vec::new() }
     }
 
+    pub fn import_from(path: &str) -> Result<Self, Box<dyn Error>> {
+        let metadata = fs::metadata(path)?;
+
+        if metadata.is_file() {
+            UserDataTable::import_from_json(path)
+        } else if metadata.is_dir() {
+            UserDataTable::import_from_json_dir(path)
+        } else {
+            Err(format!("{} is neither a file nor a directory.", path).into())
+        }
+
+    }
+
     // Import from JSON file
-    pub fn import_from_json(file_path: &str) -> Result<Self, Box<dyn Error>> {
+    fn import_from_json(file_path: &str) -> Result<Self, Box<dyn Error>> {
         let file = File::open(file_path)?;
         let data: Vec<UserDataRow> = serde_json::from_reader(file)?;
         Ok(Self{data: data})
+    }
+
+    // Import all JSON files from a directory
+    fn import_from_json_dir(dir_path: &str) -> Result<Self, Box<dyn Error>> {
+        let mut all_data: Vec<UserDataRow> = Vec::new();
+
+        // Iterate over all entries in the directory
+        for entry in fs::read_dir(dir_path)? {
+            let entry: fs::DirEntry = entry?;
+            let path: std::path::PathBuf = entry.path();
+
+            // Check if the entry is a file and ends with .json
+            if path.is_file() && path.extension().and_then(|s| s.to_str()) == Some("json") {
+                let file = File::open(&path)?;
+                
+                // Deserialize the JSON content into UserDataRow
+                let data: Vec<UserDataRow> = serde_json::from_reader(file)?;
+                
+                // Extend the result vector with the new data
+                all_data.extend(data);
+            }
+        }
+
+        Ok(Self { data: all_data })
     }
 
     pub fn transform_to_data_table(&self, old_table : &DataTable, keymap_path: &str) -> Result<DataTable, Box<dyn Error>> {
@@ -207,6 +244,20 @@ impl UserDataTable {
         Ok(new_table)
     }
 
+}
+
+fn check_path(path: &str) -> Result<(), Box<dyn Error>> {
+    let metadata = fs::metadata(path)?;
+
+    if metadata.is_dir() {
+        println!("{} is a directory.", path);
+        Ok(())
+    } else if metadata.is_file() {
+        println!("{} is a file.", path);
+        Ok(())
+    } else {
+        Err(format!("{} is neither a regular file nor a directory.", path).into())
+    }
 }
 
 /**
