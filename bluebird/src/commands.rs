@@ -1,20 +1,19 @@
 use andthe::{BlueBirdResponse, LizCommand, StateCode};
 use serde::{Deserialize, Serialize};
 
-use crate::tools::{db::{DataTable, UserDataTable}, exec::execute_shortcut_ydotool};
+use crate::tools::{db::{DataTable, UserDataTable}, exec::execute_shortcut_ydotool, rhythm::Rhythm};
 
 #[derive(Debug, Serialize, Deserialize)]
 pub struct Flute {
     pub music_sheet : DataTable,
-    pub music_sheet_path : String,
-    pub keymap_file : String,
-    pub sheet_dir : String
+    pub rhythm : Rhythm
 }
 
 impl Flute {
 
-    pub fn calibrate(&mut self) {
+    pub fn calibrate(&mut self) -> &mut Self {
         self.update_rank();
+        self
     }
 
     fn update_rank(&mut self) {
@@ -47,13 +46,13 @@ impl Flute {
             //     code : StateCode::FAIL,
             //     results : vec!["Failure:".to_string(), "Empty args:".to_string(), "Expect one path string".to_string()]
             // }
-            user_data_path = &self.sheet_dir;
+            user_data_path = &self.rhythm.user_sheets_path;
         } else {
             user_data_path = &cmd.args[0];
         }
         match UserDataTable::import_from(&user_data_path) {
             Ok(user_data) => {
-                self.music_sheet = user_data.transform_to_data_table(&self.music_sheet,&self.keymap_file).expect("222");
+                self.music_sheet = user_data.transform_to_data_table(&self.music_sheet,&self.rhythm.keymap_path).expect("222");
             }
             Err(e) => {
                 eprintln!("Failure: failed to import user data from: {}, error: {}", user_data_path, e);
@@ -112,7 +111,7 @@ impl Flute {
     }
     
     fn persist(&self, cmd: &LizCommand) -> BlueBirdResponse {
-        match self.music_sheet.export_to_json(&self.music_sheet_path) {
+        match self.music_sheet.export_to_json(&self.rhythm.music_sheet_path) {
             Ok(()) => {
                 BlueBirdResponse{
                     code : StateCode::OK,
@@ -133,6 +132,19 @@ impl Flute {
         BlueBirdResponse {
             code : StateCode::FAIL,
             results : vec![cmd.action.to_string(), "Invalid".to_string()]
+        }
+    }
+}
+
+// Implement the Drop trait for Flute
+impl Drop for Flute {
+    fn drop(&mut self) {
+        // Attempt to save the music_sheet when the Flute instance is dropped
+        let file_path: &String = &self.rhythm.music_sheet_path;
+        if let Err(e) = self.music_sheet.export_to_json(file_path) {
+            eprintln!("Failed to save music sheet in Drop: {}", e);
+        } else {
+            println!("Music sheet saved successfully in Drop.");
         }
     }
 }

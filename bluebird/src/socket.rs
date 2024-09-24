@@ -1,33 +1,81 @@
-use std::{process, vec};
-use std::thread;
+use std::vec;
 use std::sync::{Arc, Mutex};
+use std::sync::atomic::{AtomicBool, Ordering};
 
-use signal_hook::consts::{SIGINT, SIGTERM};
-use signal_hook::iterator::Signals;
 use tokio::net::UnixListener;
 use tokio::io::{AsyncReadExt, AsyncWriteExt};
+use tokio::signal;
+use std::time::Duration;
+use tokio::time;
 use crate::commands::Flute;
-use crate::rhythm::Rhythm;
 use crate::tools::db::DataTable;
+use crate::tools::rhythm::Rhythm;
 use andthe::{BlueBirdResponse, LizCommand, StateCode};
 
+use signal_hook::consts::signal::{SIGINT, SIGTERM};
+use signal_hook::flag::register;
 
+pub async fn start_daemon() -> tokio::io::Result<()> {
 
-pub async fn start_daemon(rhythm : &Rhythm) -> tokio::io::Result<()> {
-    let socket_path: &String = &rhythm.socket_path;
+    match Rhythm::read_rhythm() {
+        Ok(rhythm) => {
+            let flute_arc =  Arc::new(Mutex::new(
+                Flute {
+                    music_sheet : DataTable::import_from_json(&rhythm.music_sheet_path)
+                                .expect(&format!("Failed to initialize the music_sheet from {}", rhythm.music_sheet_path)),
+                    rhythm : rhythm
+                }
+            ));
+            let wait_s: u64;
+            let socket_path: String;
+            {
+                match flute_arc.lock() {
+                    Ok(mut flute) => {
+                        flute.calibrate();
+                        wait_s = flute.rhythm.persist_freq_s;
+                        socket_path = flute.rhythm.socket_path.clone();
+                        let _ = std::fs::remove_file(socket_path.clone());
+                    },
+                    Err(e) => {
+                        eprintln!("Failed to acquire the lock when initializing: {}", e);
+                        return Ok(())
+                    }
+                }
+            }
+        
+            let flute_arc_clone = flute_arc.clone();
+            tokio::spawn(async move {
+                persist_sheet(flute_arc_clone, wait_s).await;
+            });
+        
+            tokio::spawn(async move {
+                let _ = _start_daemon(flute_arc, socket_path).await;
+            });
+            
+            // Set up signal handling with signal-hook
+            let term_flag = Arc::new(AtomicBool::new(false));
+            let term_flag_clone = Arc::clone(&term_flag);
 
-    let mut flute: Flute = Flute {
-        music_sheet : DataTable::import_from_json(&rhythm.music_sheet_path).expect("Failed to initialize the music_sheet"),
-        keymap_file : rhythm.keymap_path.clone(),
-        music_sheet_path : rhythm.music_sheet_path.clone(),
-        sheet_dir : rhythm.user_sheets_path.clone()
-    };
-    flute.calibrate();
+            register(SIGINT, Arc::clone(&term_flag)).expect("Error setting signal handler");
+            register(SIGTERM, term_flag).expect("Error setting signal handler");
 
-    // persist the music_sheet and clean up resources when exiting
-    // data_maintain(&flute, rhythm);
+            // Wait for the SIGINT/SIGTERM signal
+            while !term_flag_clone.load(Ordering::Relaxed) {
+                time::sleep(Duration::from_secs(1)).await;  // Check every second for the signal
+            }
 
-    let _ = std::fs::remove_file(socket_path);
+            println!("Received termination signal, shutting down gracefully...");
+
+            Ok(())
+        },
+        Err(e) => {
+            eprintln!("Error: Failed to read rhythm for Bluebird: {}", e);
+            Ok(())
+        }
+    }
+}
+
+pub async fn _start_daemon(flute_arc: Arc<Mutex<Flute>>, socket_path: String) -> tokio::io::Result<()> {
 
     let listener: UnixListener = UnixListener::bind(socket_path).expect("Could not bind to socket");
     println!("A blue bird is listening...");
@@ -43,9 +91,20 @@ pub async fn start_daemon(rhythm : &Rhythm) -> tokio::io::Result<()> {
         let n: usize = socket.read(&mut buffer).await?;
         if let Some(request) = LizCommand::deserialize(&buffer[..n]) {
 
-            println!("Hear command: {:?}", request);
+            println!("Heard command: {:?}", request);
 
-            let response: BlueBirdResponse  = flute.play(&request);
+            let response: BlueBirdResponse;
+            {
+                match flute_arc.lock() {
+                    Ok(mut flute) => {
+                        response = flute.play(&request);
+                    },
+                    Err(e) => {
+                        eprintln!("Failed to acquire the lock when initializing: {}", e);
+                        continue;
+                    }
+                }
+            }
     
             // Serialize command and send it to client
             if let Some(serialized) = response.serialize() {
@@ -61,18 +120,35 @@ pub async fn start_daemon(rhythm : &Rhythm) -> tokio::io::Result<()> {
     }
 }
 
-fn data_maintain(flute: Arc<Mutex<Flute>>, rhythm: Arc<Mutex<Rhythm>>) {
-    // Create a new Signals instance to handle signals
-    let mut signals = Signals::new(&[SIGINT, SIGTERM]).expect("Unable to create Signals instance");
-
-    // Spawn a thread to handle signals
-    thread::spawn(move || {
-        for _ in signals.forever() {
-            let flute = flute.lock().unwrap();
-            let rhythm = rhythm.lock().unwrap();
-            flute.music_sheet.export_to_json(&rhythm.music_sheet_path);
-            println!("Exiting...");
-            process::exit(0);
+// Function to save data to disk
+async fn persist_sheet(flute_arc: Arc<Mutex<Flute>>, wait_s: u64) {
+    loop {
+        time::sleep(Duration::from_secs(wait_s)).await;
+        match flute_arc.lock() {
+            Ok(flute) => {
+                // Persist the data automatically
+                println!("Automatically persist the data into {}", flute.rhythm.music_sheet_path);
+                let _ = flute.music_sheet.export_to_json(&flute.rhythm.music_sheet_path);
+            },
+            Err(e) => {
+                eprintln!("Failed to acquire the lock when persisting sheet: {}", e);
+            }
         }
-    });
+    }
+}
+
+// Function to handle Ctrl+C signal for graceful shutdown
+async fn handle_ctrl_c(flute_arc: Arc<Mutex<Flute>>) {
+    // Wait for the Ctrl+C signal
+    signal::ctrl_c().await.expect("Failed to listen for Ctrl+C");
+
+    println!("Ctrl+C received, saving data and shutting down...");
+
+    // Before exiting, lock the flute and allow Drop to be called by releasing it
+    if let Ok(flute) = flute_arc.lock() {
+        println!("Gracefully shutting down...");
+        // When the lock is released, the `Drop` trait will be triggered
+    } else {
+        eprintln!("Failed to acquire lock for graceful shutdown.");
+    }
 }

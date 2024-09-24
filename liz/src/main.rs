@@ -10,13 +10,12 @@ struct UserCommand {
 
 #[tokio::main]
 async fn main() -> tokio::io::Result<()> {
-    // Get user input from command-line arguments
-    let cmd_or_none: Option<UserCommand> = get_user_command();
     
-    // TODO: considering add functionality that allow more command and arguments
-
     // If command is valid, send it to the daemon
-    if let Some(cmd) = cmd_or_none {
+    if let Some(cmd) = get_user_command() {
+
+        // TODO: considering add functionality that allow more command and arguments
+
         socket::send_command(&cmd.command, &cmd.args).await
     } else {
         Ok(()) // directly return
