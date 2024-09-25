@@ -1,4 +1,5 @@
 #!/bin/bash
+set -e
 
 # Check if the EXEC_START parameter is provided
 if [ -z "$1" ]; then
@@ -19,19 +20,21 @@ echo "Creating systemd service file at ${SERVICE_FILE}..."
 cat <<EOL | sudo tee ${SERVICE_FILE} > /dev/null
 [Unit]
 Description=Bluebird Service for Liz
-After=network.target ydotoold.service
+After=ydotoold.service
 Requires=ydotoold.service
 
 [Service]
 ExecStart=${EXEC_START}
 Restart=on-failure
-User=${USER}  # Use the current user
+User=${USER}
 # WorkingDirectory=/home/${USER}/.config/liz
-Environment=RUST_LOG=info  # Optional: Set your logging level or any other environment variables
+Environment=RUST_LOG=info
 TimeoutSec=60
+StandardOutput=journal
+StandardError=journal
 
 [Install]
-WantedBy=multi-user.target  # or WantedBy=multi-user.target
+WantedBy=default.target
 EOL
 
 # Reload systemd configuration
@@ -40,8 +43,6 @@ sudo systemctl daemon-reload
 
 # Start and enable the services
 echo "Starting and enabling the services..."
-sudo systemctl start ydotoold.service
-sudo systemctl enable ydotoold.service
 sudo systemctl start ${SERVICE_NAME}.service
 sudo systemctl enable ${SERVICE_NAME}.service
 

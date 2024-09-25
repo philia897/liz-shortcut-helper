@@ -1,6 +1,6 @@
 use std::collections::HashMap;
 use std::fs::{self, File, OpenOptions};
-use std::io::{Read, Write};
+use std::io::Read;
 use std::error::Error;
 use serde::{Deserialize, Serialize};
 
@@ -79,7 +79,7 @@ impl DataTable {
     }
 
     // Method to add a new row to the DataTable
-    pub fn add_row(&mut self, new_row: DataRow) {
+    fn add_row(&mut self, new_row: DataRow) {
         self.data.push(new_row);
     }
 
@@ -158,9 +158,9 @@ pub struct UserDataTable {
 
 impl UserDataTable {
     // Initialize an empty table
-    pub fn new() -> Self {
-        Self { data: Vec::new() }
-    }
+    // pub fn new() -> Self {
+    //     Self { data: Vec::new() }
+    // }
 
     pub fn import_from(path: &str) -> Result<Self, Box<dyn Error>> {
         let metadata = fs::metadata(path)?;
@@ -244,20 +244,6 @@ impl UserDataTable {
         Ok(new_table)
     }
 
-}
-
-fn check_path(path: &str) -> Result<(), Box<dyn Error>> {
-    let metadata = fs::metadata(path)?;
-
-    if metadata.is_dir() {
-        println!("{} is a directory.", path);
-        Ok(())
-    } else if metadata.is_file() {
-        println!("{} is a file.", path);
-        Ok(())
-    } else {
-        Err(format!("{} is neither a regular file nor a directory.", path).into())
-    }
 }
 
 /**

@@ -2,6 +2,10 @@
 name = "bluebird"
 version = "0.1.0"
 edition = "2021"
+authors = ["Felix Wang <wangzekun.felix@gmail.com>"]
+description = "The daemon hearing, executing and responding to the commends from Liz for liz-shortcut-helper"
+license = "GPL-3.0"
+repository = "https://github.com/philia897/liz-shortcut-helper"
 
 [dependencies]
 tokio = { version = "1.0", features = ["full"] }

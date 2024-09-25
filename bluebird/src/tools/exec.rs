@@ -15,7 +15,7 @@ fn get_args(shortcut: &str) -> Vec<&str> {
     }
 }
 
-pub fn execute_shortcut_ydotool(shortcut_str: &str, delay_ms: u64) -> Result<(), Box<dyn std::error::Error>> {
+pub fn execute_shortcut_ydotool(shortcut_str: &str, delay_ms: u64, ydotool_socket_path: &str) -> Result<(), Box<dyn std::error::Error>> {
     let shortcuts: Vec<&str> = shortcut_str.split("<str>").collect();
 
     for shortcut in shortcuts {
@@ -29,6 +29,7 @@ pub fn execute_shortcut_ydotool(shortcut_str: &str, delay_ms: u64) -> Result<(),
 
         // Execute the command
         let result: Result<std::process::Output, std::io::Error> = Command::new("ydotool")
+            .env("YDOTOOL_SOCKET", ydotool_socket_path)
             .args(args)
             .output();
 
@@ -39,7 +40,7 @@ pub fn execute_shortcut_ydotool(shortcut_str: &str, delay_ms: u64) -> Result<(),
                 } else {
                     // Explicitly return an Err with the error message
                     let error_message: String = format!(
-                        "Command failed with status: {:?}, stderr: {:?}",
+                        "ydotool command failed with status: {:?}, stderr: {:?}",
                         output.status,
                         String::from_utf8_lossy(&output.stderr)
                     );

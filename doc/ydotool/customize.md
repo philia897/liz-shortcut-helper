@@ -66,21 +66,14 @@ If the manual steps work, create or update the systemd service file to reflect t
    [Service]
    Type=simple
    Restart=always
-   ExecStart=/usr/bin/ydotoold --socket-path="/run/ydotoold/socket"
-   ExecStartPost=/bin/sh -c 'chown root:ydotoolgroup /run/ydotoold/socket && chmod 660 /run/ydotoold/socket'
+   ExecStart=/usr/bin/ydotoold --socket-path="/tmp/.ydotool_socket"
+   ExecStartPost=/bin/sh -c 'chown root:ydotoolgroup /tmp/.ydotool_socket && chmod 660 /tmp/.ydotool_socket'
    ExecReload=/usr/bin/kill -HUP $MAINPID
    KillMode=process
    TimeoutSec=180
 
-   # Set the service to run as root
-   User=root
-   Group=root
-
-   # Grant the service access to /dev/uinput
-   DeviceAllow=/dev/uinput rw
-
    [Install]
-   WantedBy=multi-user.target
+   WantedBy=default.target
    ```
 
 3. **Reload systemd:**

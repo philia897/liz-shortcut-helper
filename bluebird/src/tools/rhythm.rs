@@ -7,11 +7,13 @@ use std::path::PathBuf;
 #[serde(default)]
 pub struct  Rhythm {
     pub liz_path : String,   // The config path from 
-    pub user_sheets_path : String,
-    pub socket_path : String,
-    pub music_sheet_path : String,
+    pub user_sheets_path : String,  // Path for all the shortcut sheets
+    pub socket_path : String,  // Path for socket for communication between Liz and Bluebird
+    pub music_sheet_path : String,  // Path for the lock file for Bluebird
     pub keymap_path : String,
-    pub persist_freq_s : u64
+    pub persist_freq_s : u64,  // The interval between two auto-persisting
+    pub ydotool_socket_path : String,  // for ydotool config
+    pub ydotook_interval_ms: u64, // for ydotool config
 }
 
 impl Default for Rhythm {
@@ -23,6 +25,7 @@ impl Default for Rhythm {
         let socket_path: String = "/tmp/bluebird_daemon.sock".to_string();
         let music_sheet_path: String = format!("{}/music_sheet.lock", liz_path);
         let keymap_path: String = format!("{}/keymap.json", liz_path);
+        let ydotool_socket_path = "/tmp/.ydotool_socket".to_string();
 
         Self {
             liz_path: liz_path,
@@ -30,7 +33,9 @@ impl Default for Rhythm {
             socket_path: socket_path,
             music_sheet_path: music_sheet_path,
             keymap_path: keymap_path,
-            persist_freq_s: 3600
+            persist_freq_s: 3600,
+            ydotool_socket_path: ydotool_socket_path,
+            ydotook_interval_ms: 100
         }
     }
 }
