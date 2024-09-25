@@ -31,7 +31,7 @@ impl Flute {
         }
     }
     
-    fn run(&self, cmd: &LizCommand) -> BlueBirdResponse {
+    fn run(&self, _cmd: &LizCommand) -> BlueBirdResponse {
         BlueBirdResponse {
             code : StateCode::OK,
             results : self.music_sheet.get_formatted_vec()
@@ -86,7 +86,8 @@ impl Flute {
                         results : vec!["BUG:".to_string(), "No keycode found on index:".to_string(), cmd.args[0].clone()]
                     }
                 }
-                if let Err(e) = execute_shortcut_ydotool(&keycode.unwrap(), 100) {
+                if let Err(e) = execute_shortcut_ydotool(
+                            &keycode.unwrap(), self.rhythm.ydotook_interval_ms, &self.rhythm.ydotool_socket_path) {
                     eprintln!("Failure: Fail to execute shortcut: {:?}", e);
                     return BlueBirdResponse {
                         code : StateCode::FAIL,
@@ -110,7 +111,7 @@ impl Flute {
         }
     }
     
-    fn persist(&self, cmd: &LizCommand) -> BlueBirdResponse {
+    fn persist(&self, _cmd: &LizCommand) -> BlueBirdResponse {
         match self.music_sheet.export_to_json(&self.rhythm.music_sheet_path) {
             Ok(()) => {
                 BlueBirdResponse{

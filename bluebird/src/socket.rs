@@ -4,7 +4,6 @@ use std::sync::atomic::{AtomicBool, Ordering};
 
 use tokio::net::UnixListener;
 use tokio::io::{AsyncReadExt, AsyncWriteExt};
-use tokio::signal;
 use std::time::Duration;
 use tokio::time;
 use crate::commands::Flute;
@@ -134,21 +133,5 @@ async fn persist_sheet(flute_arc: Arc<Mutex<Flute>>, wait_s: u64) {
                 eprintln!("Failed to acquire the lock when persisting sheet: {}", e);
             }
         }
-    }
-}
-
-// Function to handle Ctrl+C signal for graceful shutdown
-async fn handle_ctrl_c(flute_arc: Arc<Mutex<Flute>>) {
-    // Wait for the Ctrl+C signal
-    signal::ctrl_c().await.expect("Failed to listen for Ctrl+C");
-
-    println!("Ctrl+C received, saving data and shutting down...");
-
-    // Before exiting, lock the flute and allow Drop to be called by releasing it
-    if let Ok(flute) = flute_arc.lock() {
-        println!("Gracefully shutting down...");
-        // When the lock is released, the `Drop` trait will be triggered
-    } else {
-        eprintln!("Failed to acquire lock for graceful shutdown.");
     }
 }
