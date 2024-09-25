@@ -8,14 +8,27 @@ A Rust-based helper for those who can not remember all the shortcuts (especially
 
  - Customize the shortcuts and add whatever shortcut or command you want.
 
-The project name is inspired by a great animation named "Liz and the Blue bird"
+The project name is inspired by a great animation named "Liz and the Blue bird".
 
 # Quick Start
 
 ## Installation
 
+
+
 ## How to use
 
+```bash
+# Show all shortcuts by rofi, then autorun the selected shortcut
+liz
+# or
+liz run
+
+# Reload all the sheets inside the given dir, use this when the sheets are modified
+liz reload path/to/sheets
+liz reload # use default sheets path: /home/{whoami}/.config/liz/sheets
+
+```
 
 # Project Structure
 
@@ -29,4 +42,4 @@ The project name is inspired by a great animation named "Liz and the Blue bird"
 
  - Thanks to the wonderful projects [Rofi](https://github.com/davatorium/rofi/) and [ydotool](https://github.com/ReimuNotMoe/ydotool), which makes this project possible.
 
- - License: 
+ - License: [GPL-3.0](./LICENSE)
