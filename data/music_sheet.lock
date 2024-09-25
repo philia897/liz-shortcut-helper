@@ -1,0 +1,20 @@
+[
+    {
+        "hit_number": 0,
+        "comment": "Go to end of command prompt",
+        "keycode": "29.1 18.1 18.0 29.0",
+        "formatted": "<b>To command end</b> | Terminal | ctrl+e"
+    },
+    {
+        "hit_number": 2,
+        "comment": "Clear the command prompt typed",
+        "keycode": "29.1 22.1 22.0 29.0",
+        "formatted": "<b>Clear command prompt</b> | Terminal | ctrl+u"
+    },
+    {
+        "hit_number": 3,
+        "comment": "Test",
+        "keycode": "126.1 104.1 104.0 126.0 15.1 15.0 <str>type '123!@#'<str> 15.1 15.0 <str>type 'ABC'<str>",
+        "formatted": "<b>Test</b> | Test | meta+pageup tab 123!@# tab ABC"
+    }
+]

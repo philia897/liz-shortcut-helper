@@ -1,0 +1,14 @@
+[
+    {
+        "description":"Test",
+        "shortcut":"meta+pageup tab 123!@# tab ABC",
+        "application":"Test",
+        "comment":"Test"
+    },
+    {
+        "description":"Test2",
+        "shortcut":"meta+pageup tab 123!@# tab ABC",
+        "application":"Test",
+        "comment":"Test2"
+    }
+]

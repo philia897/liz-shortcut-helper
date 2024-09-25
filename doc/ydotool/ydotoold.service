@@ -1,0 +1,16 @@
+# /etc/systemd/system/ydotoold.service
+[Unit]
+Description=Starts ydotoold service
+After=network.target
+
+[Service]
+Type=simple
+Restart=always
+ExecStart=/usr/bin/ydotoold --socket-path="/tmp/.ydotool_socket"
+ExecStartPost=/bin/sh -c 'chown root:ydotoolgroup /tmp/.ydotool_socket && chmod 660 /tmp/.ydotool_socket'
+ExecReload=/usr/bin/kill -HUP $MAINPID
+KillMode=process
+TimeoutSec=180
+
+[Install]
+WantedBy=default.target
