@@ -4,8 +4,8 @@ use std::thread::sleep;
 use std::time::Duration;
 
 fn get_args(shortcut: &str) -> Vec<&str> {
-    if shortcut.starts_with("type") {
-        let type_str: &str = &shortcut[5..]; // Slice to remove "type "
+    if shortcut.starts_with("+") {
+        let type_str: &str = &shortcut[2..]; // Slice to remove "+ "
         vec!["type", type_str]
     } else {
         let mut cmd: Vec<&str> = vec!["key"];

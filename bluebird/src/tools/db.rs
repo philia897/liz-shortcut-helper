@@ -256,38 +256,53 @@ impl UserDataTable {
  */
 fn convert_shortcut_to_key_presses(shortcut: &str, key_event_codes: &HashMap<String, usize>) -> Option<String> {
     let mut result = Vec::new();
-    
-    // Split the input by spaces
-    let parts: Vec<&str> = shortcut.split_whitespace().collect();
 
-    for part in parts {
-        if part.contains('+') && part != "+" {
-            let keys: Vec<&str> = part.split('+').collect();
-            for key in &keys {
-                let key: String = key.trim().to_lowercase();
-                if let Some(&event_code) = key_event_codes.get(&key) {
-                    result.push(format!("{}.1", event_code));
-                } else {
-                    eprintln!("{} does not exist!", key);
-                    return None;
-                }
-            }
-            for key in keys.iter().rev() {
-                let key: String = key.trim().to_lowercase();
-                if let Some(&event_code) = key_event_codes.get(&key) {
-                    result.push(format!("{}.0", event_code));
-                } else {
-                    eprintln!("{} does not exist!", key);
-                    return None;
-                }
-            }
+    let ss: Vec<&str> = shortcut.split("(str)").collect();
+    
+    for s in ss {
+        if s.is_empty() {
+            continue;
+        }
+        if s.starts_with("+") {
+            let type_str: &str = &s[2..];
+            result.push(format!("<str>+ {}<str>", type_str.trim()));
         } else {
-            let key = part.trim().to_lowercase();
-            if let Some(&event_code) = key_event_codes.get(&key) {
-                result.push(format!("{}.1", event_code));
-                result.push(format!("{}.0", event_code));
-            } else {
-                result.push(format!("<str>type '{}'<str>", part.trim()));
+            // Split the input by spaces
+            let parts: Vec<&str> = s.split_whitespace().collect();
+
+            for part in parts {
+                if part.is_empty() {
+                    continue;
+                }
+                if part.contains('+') && part != "+" {
+                    let keys: Vec<&str> = part.split('+').collect();
+                    for key in &keys {
+                        let key: String = key.trim().to_lowercase();
+                        if let Some(&event_code) = key_event_codes.get(&key) {
+                            result.push(format!("{}.1", event_code));
+                        } else {
+                            eprintln!("{} does not exist!", key);
+                            return None;
+                        }
+                    }
+                    for key in keys.iter().rev() {
+                        let key: String = key.trim().to_lowercase();
+                        if let Some(&event_code) = key_event_codes.get(&key) {
+                            result.push(format!("{}.0", event_code));
+                        } else {
+                            eprintln!("{} does not exist!", key);
+                            return None;
+                        }
+                    }
+                } else {
+                    let key = part.trim().to_lowercase();
+                    if let Some(&event_code) = key_event_codes.get(&key) {
+                        result.push(format!("{}.1", event_code));
+                        result.push(format!("{}.0", event_code));
+                    } else {
+                        result.push(format!("<str>+ {}<str>", part.trim()));
+                    }
+                }
             }
         }
     }
