@@ -10,5 +10,17 @@
         "shortcut":"meta+pageup tab 123!@# tab ABC",
         "application":"Test",
         "comment":"Test2"
+    },
+    {
+        "description":"Welcome",
+        "shortcut":"(str)+ liz and the blue bird",
+        "application":"Welcome",
+        "comment":"Welcom message"
+    },
+    {
+        "description":"Hello world",
+        "shortcut":"(str)+ Hello World!",
+        "application":"Welcome",
+        "comment":"Welcom message"
     }
 ]

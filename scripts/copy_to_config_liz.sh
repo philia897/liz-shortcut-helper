@@ -10,6 +10,8 @@ if [ ! -d "$TARGET_DIR" ]; then
     mkdir -p "$TARGET_DIR"
 fi
 
+source generate_default_rhythm.sh
+
 # Copy files from ./data/* to ~/.config/liz
 echo "Copying files from ./data/* to $TARGET_DIR..."
 cp -r ./data/* "$TARGET_DIR"

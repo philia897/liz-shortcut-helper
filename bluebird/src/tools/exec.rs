@@ -5,7 +5,7 @@ use std::time::Duration;
 
 fn get_args(shortcut: &str) -> Vec<&str> {
     if shortcut.starts_with("+") {
-        let type_str: &str = &shortcut[2..]; // Slice to remove "+ "
+        let type_str: &str = &shortcut[2..]; // remove the prefix
         vec!["type", type_str]
     } else {
         let mut cmd: Vec<&str> = vec!["key"];
