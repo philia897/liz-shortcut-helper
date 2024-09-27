@@ -5,7 +5,7 @@ set -e
 uninstall_package() {
     local package=$1
     if command -v pacman &> /dev/null; then
-        sudo pacman -Rns --noconfirm "$package"
+        sudo pacman -Rns "$package"
     elif command -v apt &> /dev/null; then
         sudo apt remove --purge -y "$package"
     elif command -v dnf &> /dev/null; then

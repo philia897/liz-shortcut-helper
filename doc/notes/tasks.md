@@ -4,6 +4,8 @@
     
 - ~~Add functionality to persist automatically when exiting or using a timer (low priority)~~
     
-- Allow running Bluebird as backend service and add Liz to using one shortcut to call
+- ~~Allow running Bluebird as backend service and add Liz to using one shortcut to call~~
+
+- Make it available to use pacman to run it.
     
 - Add more shortcuts, fitting terminal, vim, etc.
