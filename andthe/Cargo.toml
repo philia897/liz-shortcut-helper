@@ -1,6 +1,6 @@
 [package]
 name = "andthe"
-version = "0.1.0"
+version = "0.1.1"
 edition = "2021"
 authors = ["Felix Wang <wangzekun.felix@gmail.com>"]
 description = "Defines the communication protocol between Liz and Bluebird for liz-shortcut-helper"

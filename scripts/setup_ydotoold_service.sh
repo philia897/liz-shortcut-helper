@@ -13,6 +13,31 @@ fi
 echo "Adding $(whoami) to the 'ydotoolgroup'..."
 sudo usermod -aG ydotoolgroup $(whoami)
 
+
+# Check if need to further creating the service
+SERVICE_FILE="/etc/systemd/system/ydotoold.service"
+
+if [ -f "$SERVICE_FILE" ]; then
+    echo "The service file $SERVICE_FILE already exists."
+    read -p "Do you want to overwrite it? (y/N): " choice
+    choice=${choice:-N}  # Default to 'N' if no input is provided
+    case "$choice" in 
+        [yY][eE][sS]|[yY]) 
+            echo "Disabling and stopping the existing ydotoold.service..."
+            sudo systemctl disable ydotoold.service
+            sudo systemctl stop ydotoold.service
+            echo "Overwriting $SERVICE_FILE..."
+            ;;
+        *) 
+            echo "Exiting without making changes."
+            return 0
+            ;;
+    esac
+else
+    echo "Creating the systemd service file..."
+fi
+
+
 # Step 3: Remove the old socket file if it exists
 SOCKET_FILE="/tmp/.ydotool_socket"
 if [ -e "$SOCKET_FILE" ]; then
@@ -23,7 +48,6 @@ else
 fi
 
 # Step 4: Edit the systemd service file
-SERVICE_FILE="/etc/systemd/system/ydotoold.service"
 echo "Creating or updating the systemd service file..."
 
 sudo tee $SERVICE_FILE > /dev/null << EOL
@@ -56,4 +80,4 @@ sudo systemctl start ydotoold.service
 
 # Step 7: Verify the service status
 echo "Checking ydotoold.service status..."
-sudo systemctl status ydotoold.service
+sudo systemctl status ydotoold.service --no-pager

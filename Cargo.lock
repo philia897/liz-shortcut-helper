@@ -19,7 +19,7 @@ checksum = "512761e0bb2578dd7380c6baaa0f4ce03e84f95e960231d1dec8bf4d7d6e2627"
 
 [[package]]
 name = "andthe"
-version = "0.1.0"
+version = "0.1.1"
 dependencies = [
  "serde",
  "serde_json",
@@ -54,7 +54,7 @@ checksum = "b048fb63fd8b5923fc5aa7b340d8e156aec7ec02f0c78fa8a6ddc2613f6f71de"
 
 [[package]]
 name = "bluebird"
-version = "0.1.0"
+version = "0.1.1"
 dependencies = [
  "andthe",
  "dirs",
@@ -173,7 +173,7 @@ dependencies = [
 
 [[package]]
 name = "liz"
-version = "0.1.0"
+version = "0.1.1"
 dependencies = [
  "andthe",
  "serde",

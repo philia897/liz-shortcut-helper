@@ -1,6 +1,6 @@
 [package]
 name = "bluebird"
-version = "0.1.0"
+version = "0.1.1"
 edition = "2021"
 authors = ["Felix Wang <wangzekun.felix@gmail.com>"]
 description = "The daemon hearing, executing and responding to the commends from Liz for liz-shortcut-helper"

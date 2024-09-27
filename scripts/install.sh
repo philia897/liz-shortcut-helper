@@ -1,17 +1,23 @@
 #!/bin/bash
 set -e
 
-echo "Move binaries to /usr/local/bin"
-sudo cp liz /usr/local/bin/
-sudo cp bluebird /usr/local/bin/
+# Copy the data/* to the default place where is
+# /home/yourname/.config/liz/
+# If it already exists, feel free to comment and skip this
+source copy_to_config_liz.sh || { echo "Install Failed"; exit 1; }
 
-echo "Make binaries executable"
-sudo chmod +x /usr/local/bin/liz
-sudo chmod +x /usr/local/bin/bluebird
+# Intall ydotool and rofi, if you already installed them
+# or you want to install by yourself, comment this
+source install_dependencies.sh || { echo "Install Failed"; exit 1; }
 
-source copy_to_config_liz.sh
-source install_dependencies.sh
-source setup_ydotoold_service.sh
-source setup_bluebird_service.sh /usr/local/bin/bluebird
+# Setup the ydotool deamon service, if youw want to do this
+# manually, skip this. Or you can check this to see what it
+# does and make sure it is safe in your system.
+source setup_ydotoold_service.sh || { echo "Install Failed"; exit 1; }
+
+# Setup the bluebird service, and enable it to automatically
+# start on startup. It is mandatory, and should NOT be commented
+# Or the bluebird and liz will not be upgraded.
+source setup_bluebird_service.sh || { echo "Install Failed"; exit 1; }
 
 echo "Install complete!"

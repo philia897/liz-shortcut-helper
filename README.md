@@ -16,6 +16,18 @@ The project name is inspired by a great animation named "Liz and the Blue bird".
 
 ## Installation
 
+### Download from [Release](https://github.com/philia897/liz-shortcut-helper/releases)
+
+Download the tar.gz package, and run the install.sh to install and auto configure everything.
+
+```
+tar -xzf [package_name.tar.gz]
+
+cd [package_name]
+
+./install.sh
+```
+
 ### Building from source 
 
 Fist please make sure `rustc` and `cargo` already installed for building this project. For Arch user, you can use `sudo pacman -Sy rust` to install both.
@@ -36,6 +48,8 @@ cd liz-shortcut-helper && cargo build --release
 rm -rf release/ release.tar.gz
 
 ```
+
+> If you have problems with ydotool (can not start the service, socket file permission wrong, etc): [read this](./doc/ydotool/README.md) 
 
 ## How to use
 
