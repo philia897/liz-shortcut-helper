@@ -31,8 +31,8 @@ USER=$(whoami)
 
 # Define the paths with the current user
 LIZ_PATH="/home/$USER/.config/liz/"
-MUSIC_SHEET_PATH="/home/$USER/Workroom/liz-shortcut-helper/data/music_sheet.lock"
-USER_SHEETS_PATH="/home/$USER/Workroom/liz-shortcut-helper/data/sheets"
+MUSIC_SHEET_PATH="/home/$USER/.config/liz/music_sheet.lock"
+USER_SHEETS_PATH="/home/$USER/.config/liz/sheets"
 KEYMAP_PATH="/home/$USER/.config/liz/keymap.json"
 YDOTTOOL_SOCKET_PATH="/tmp/.ydotool_socket"
 
