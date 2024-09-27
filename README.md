@@ -6,9 +6,11 @@ A Rust-based helper for those who can not remember all the shortcuts (especially
 
  - Automatically execute the selected shortcut using [ydotool](https://github.com/ReimuNotMoe/ydotool)
 
- - Customize the shortcuts and add whatever shortcut or command you want.
+ - Customize the shortcuts and add whatever shortcut or command you want, see examples in [examples.json](./data/sheets/examples.json).
 
 The project name is inspired by a great animation named "Liz and the Blue bird".
+
+![Show example](./assets/liz_example.gif)
 
 # Quick Start
 

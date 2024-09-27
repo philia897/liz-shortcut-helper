@@ -57,26 +57,26 @@ impl DataTable {
         self.data.iter().map(|row| row.formatted.clone()).collect()
     }
 
-    // Set a value by row and column name
-    pub fn set_value(&mut self, row: usize, column: &str, value: String) -> Result<(), Box<dyn Error>> {
-        if let Some(r) = self.data.get_mut(row) {
-            match column {
-                "hit_number" => {
-                    r.hit_number = value.parse::<i64>().map_err(|_| {
-                        // Specify the error type explicitly
-                        Box::<dyn std::error::Error>::from("Invalid hit_number")
-                    })?;
-                }
-                "comment" => r.comment = value,
-                "keycode" => r.keycode = value,
-                "formatted" => r.formatted = value,
-                _ => return Err("Column not found".into()),
-            }
-            Ok(())
-        } else {
-            Err("Row index out of bounds".into())
-        }
-    }
+    // // Set a value by row and column name
+    // pub fn set_value(&mut self, row: usize, column: &str, value: String) -> Result<(), Box<dyn Error>> {
+    //     if let Some(r) = self.data.get_mut(row) {
+    //         match column {
+    //             "hit_number" => {
+    //                 r.hit_number = value.parse::<i64>().map_err(|_| {
+    //                     // Specify the error type explicitly
+    //                     Box::<dyn std::error::Error>::from("Invalid hit_number")
+    //                 })?;
+    //             }
+    //             "comment" => r.comment = value,
+    //             "keycode" => r.keycode = value,
+    //             "formatted" => r.formatted = value,
+    //             _ => return Err("Column not found".into()),
+    //         }
+    //         Ok(())
+    //     } else {
+    //         Err("Row index out of bounds".into())
+    //     }
+    // }
 
     // Method to add a new row to the DataTable
     fn add_row(&mut self, new_row: DataRow) {

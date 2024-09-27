@@ -1,0 +1,50 @@
+[
+    {
+        "description":"Test: meta+pageup",
+        "shortcut":"meta+pageup",
+        "application":"Example",
+        "comment":"Test to run shortcut 'meta+pageup', maximize window in KDE or maybe other desktop"
+    },
+    {
+        "description":"Test: ctrl+shift+c",
+        "shortcut":"ctrl+shift+c",
+        "application":"Example",
+        "comment":"Test to run shortcut 'ctrl+shift+c', the copy command in Zsh"
+    },
+    {
+        "description":"Test: esc :set nu",
+        "shortcut":"esc :set space nu",
+        "application":"Example",
+        "comment":"Test to run shortcut 'esc :set nu', set number in vim/nvim"
+    },
+    {
+        "description":"Test: esc :set nu (alternative)",
+        "shortcut":"esc (str)+ :set nu",
+        "application":"Example",
+        "comment":"Test to run shortcut 'esc :set nu', using (str) to type string instead"
+    },
+    {
+        "description":"Test: esc :set nu enter",
+        "shortcut":"esc :set space nu enter",
+        "application":"Example",
+        "comment":"Test to run shortcut 'esc :set nu enter', set number in vim/nvim"
+    },
+    {
+        "description":"Test: esc :set nu enter (alternative)",
+        "shortcut":"esc (str)+ :set nu (str) enter",
+        "application":"Example",
+        "comment":"Test to run shortcut 'esc :set nu enter', using (str) to type string instead"
+    },
+    {
+        "description":"Welcome",
+        "shortcut":"(str)+ liz and the blue bird",
+        "application":"Welcome",
+        "comment":"Welcom message"
+    },
+    {
+        "description":"Hello world",
+        "shortcut":"(str)+ Hello World!",
+        "application":"Welcome",
+        "comment":"Welcom message 2"
+    }
+]

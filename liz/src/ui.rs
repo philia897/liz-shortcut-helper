@@ -84,9 +84,9 @@ pub fn show_shortcuts_rofi(options: &Vec<String>) -> Result<Option<String>, UiEr
 #[derive(Debug)]
 pub enum ErrorType {
     Running,
-    Unknown,
+    // Unknown,
     Command,
-    Timeout,
+    // Timeout,
 }
 
 // Define the show_error function
@@ -99,10 +99,10 @@ pub fn show_error(error_type: ErrorType, error_msg: &String) {
                 .spawn()
                 .expect("Failed to launch Rofi");
         }
-        ErrorType::Unknown => {
-            println!("Unknown error: {}", error_msg);
-            // Additional handling for unknown errors can go here
-        }
+        // ErrorType::Unknown => {
+        //     println!("Unknown error: {}", error_msg);
+        //     // Additional handling for unknown errors can go here
+        // }
         ErrorType::Command => {
             println!("Command error: {}", error_msg);
             Command::new("rofi")
@@ -110,10 +110,10 @@ pub fn show_error(error_type: ErrorType, error_msg: &String) {
                 .spawn()
                 .expect("Failed to launch Rofi");
         }
-        ErrorType::Timeout => {
-            println!("Timeout error: {}", error_msg);
-            // Additional handling for timeout errors can go here
-        }
+        // ErrorType::Timeout => {
+        //     println!("Timeout error: {}", error_msg);
+        //     // Additional handling for timeout errors can go here
+        // }
     }
 }
 
