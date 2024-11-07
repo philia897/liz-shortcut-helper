@@ -41,8 +41,8 @@ fn get_user_command() -> Option<UserCommand> {
     }
 
     match command.as_str() {
-        "run" | "reload" | "persist" => {},  // Valid command
-        "help" => {
+        "run" | "reload" | "persist" | "info" => {},  // Valid command
+        "help" | "-h" => {
             show_help();
             return None
         }

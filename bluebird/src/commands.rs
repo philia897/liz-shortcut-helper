@@ -27,6 +27,7 @@ impl Flute {
             "reload" => self.reload(cmd),
             "_exec_by_idx" => self._exec_by_idx(cmd),
             "persist" => self.persist(cmd),
+            "info" => self.info(cmd),
             _ => self.default_handle(cmd),
         }
     }
@@ -87,7 +88,7 @@ impl Flute {
                     }
                 }
                 if let Err(e) = execute_shortcut_ydotool(
-                            &keycode.unwrap(), self.rhythm.ydotook_interval_ms, &self.rhythm.ydotool_socket_path) {
+                            &keycode.unwrap(), self.rhythm.ydotool_interval_ms, &self.rhythm.ydotool_socket_path) {
                     eprintln!("Failure: Fail to execute shortcut: {:?}", e);
                     return BlueBirdResponse {
                         code : StateCode::FAIL,
@@ -126,6 +127,22 @@ impl Flute {
                     results : vec!["BUG:".to_string(), "Failed to persist music_sheet".to_string()]
                 }
             }
+        }
+    }
+
+    fn info(&self, _cmd: &LizCommand) -> BlueBirdResponse {
+        let r: &Rhythm = &self.rhythm;
+        BlueBirdResponse{
+            code : StateCode::OK,
+            results : vec![
+                "liz_path".to_string(), r.liz_path.clone(),
+                "user_sheets_path".to_string(), r.user_sheets_path.clone(),
+                "bluebird_socket_path".to_string(), r.socket_path.clone(),
+                "music_sheet_lock_path".to_string(), r.music_sheet_path.clone(),
+                "keymap_path".to_string(), r.keymap_path.clone(),
+                "persist_frequence_seconds".to_string(), r.persist_freq_s.to_string(),
+                "ydotool_socket_path".to_string(), r.socket_path.clone(),
+            ]
         }
     }
 

@@ -18,7 +18,7 @@ pub async fn start_daemon() -> tokio::io::Result<()> {
 
     match Rhythm::read_rhythm() {
         Ok(rhythm) => {
-            let flute_arc =  Arc::new(Mutex::new(
+            let flute_arc: Arc<Mutex<Flute>> =  Arc::new(Mutex::new(
                 Flute {
                     music_sheet : DataTable::import_from_json(&rhythm.music_sheet_path)
                                 .expect(&format!("Failed to initialize the music_sheet from {}", rhythm.music_sheet_path)),
@@ -42,7 +42,7 @@ pub async fn start_daemon() -> tokio::io::Result<()> {
                 }
             }
         
-            let flute_arc_clone = flute_arc.clone();
+            let flute_arc_clone: Arc<Mutex<Flute>> = flute_arc.clone();
             tokio::spawn(async move {
                 persist_sheet(flute_arc_clone, wait_s).await;
             });
@@ -52,8 +52,8 @@ pub async fn start_daemon() -> tokio::io::Result<()> {
             });
             
             // Set up signal handling with signal-hook
-            let term_flag = Arc::new(AtomicBool::new(false));
-            let term_flag_clone = Arc::clone(&term_flag);
+            let term_flag: Arc<AtomicBool> = Arc::new(AtomicBool::new(false));
+            let term_flag_clone: Arc<AtomicBool> = Arc::clone(&term_flag);
 
             register(SIGINT, Arc::clone(&term_flag)).expect("Error setting signal handler");
             register(SIGTERM, term_flag).expect("Error setting signal handler");

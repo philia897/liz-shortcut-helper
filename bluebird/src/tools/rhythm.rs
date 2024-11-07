@@ -13,7 +13,7 @@ pub struct  Rhythm {
     pub keymap_path : String,
     pub persist_freq_s : u64,  // The interval between two auto-persisting
     pub ydotool_socket_path : String,  // for ydotool config
-    pub ydotook_interval_ms: u64, // for ydotool config
+    pub ydotool_interval_ms: u64, // for ydotool config
 }
 
 impl Default for Rhythm {
@@ -35,7 +35,7 @@ impl Default for Rhythm {
             keymap_path: keymap_path,
             persist_freq_s: 3600,
             ydotool_socket_path: ydotool_socket_path,
-            ydotook_interval_ms: 100
+            ydotool_interval_ms: 100
         }
     }
 }

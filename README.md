@@ -30,7 +30,7 @@ cd [package_name]
 
 ### Building from source 
 
-Fist please make sure `rustc` and `cargo` already installed for building this project. For Arch user, you can use `sudo pacman -Sy rust` to install both.
+First please make sure `rustc` and `cargo` already installed for building this project. For Arch user, you can use `sudo pacman -Sy rust` to install both.
 
 > If you want to further develop or modify the code, recommand to install [rustup](https://rustup.rs/) instead. See [this tutorial](https://wiki.archlinux.org/title/Rust#Installation).
 

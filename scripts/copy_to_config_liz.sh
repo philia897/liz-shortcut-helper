@@ -30,15 +30,14 @@ fi
 USER=$(whoami)
 
 # Define the paths with the current user
-LIZ_PATH="/home/$USER/.config/liz/"
-MUSIC_SHEET_PATH="/home/$USER/.config/liz/music_sheet.lock"
-USER_SHEETS_PATH="/home/$USER/.config/liz/sheets"
-KEYMAP_PATH="/home/$USER/.config/liz/keymap.json"
+MUSIC_SHEET_PATH="$TARGET_DIR/music_sheet.lock"
+USER_SHEETS_PATH="$TARGET_DIR/sheets"
+KEYMAP_PATH="$TARGET_DIR/keymap.json"
 YDOTTOOL_SOCKET_PATH="/tmp/.ydotool_socket"
 
 # Create the rhythm.toml file with the paths
 cat <<EOL > ./data/rhythm.toml
-liz_path = "$LIZ_PATH"
+liz_path = "$TARGET_DIR"
 music_sheet_path = "$MUSIC_SHEET_PATH"
 user_sheets_path = "$USER_SHEETS_PATH"
 keymap_path = "$KEYMAP_PATH"

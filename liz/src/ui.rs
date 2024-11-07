@@ -119,5 +119,31 @@ pub fn show_error(error_type: ErrorType, error_msg: &String) {
 
 //TODO: complete the manual, maybe import from one file and show by rofi or commandline.
 pub fn show_help() {
-    println!("Liz: Help manual")
+    let commands: Vec<(&str, &str, &str)> = vec![
+        ("run", "", "Start liz and popup the shortcut helper."),
+        ("reload", "DATA_PATH", "Reload shortcut data from sheets in the DATA_PATH (if given)."),
+        ("persist", "", "Persist shortcut data manually."),
+        ("info", "", "Show relative info of Liz."),
+        ("help", "", "Show this help message."),
+    ];
+
+    println!("Usage: liz [COMMAND] [ARGUMENTS]");
+
+    println!("\nAvailable Commands:");
+    for (command, args, description) in commands {
+        println!("  {:<10} {:<12} {}", command, args, description);
+    }
+
+    //println!("\nFor more information about a specific command, use `liz [COMMAND] --help`.");
+}
+
+pub fn show_info(items: &Vec<String>) {
+    if items.len() % 2 != 0 {
+        eprintln!("Warning: the length of results (item-content pairs) is {}, but it should be an even number.", items.len());
+    }
+    for chunk in items.chunks(2) {
+        if let [key, value] = chunk {
+            println!("{:<25}: {}", key, value);
+        }
+    }
 }

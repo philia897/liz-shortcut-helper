@@ -1,7 +1,7 @@
 use tokio::{io::{AsyncReadExt, AsyncWriteExt}, net::UnixStream};
 use andthe::{BlueBirdResponse, LizCommand, StateCode};
 
-use crate::ui::{show_error, show_shortcuts_rofi, ErrorType};
+use crate::ui::{show_error, show_info, show_shortcuts_rofi, ErrorType};
 
 pub async fn send_command(command: &str, args: &Vec<String>) -> tokio::io::Result<()> {
     // Build the LizCommand
@@ -24,7 +24,7 @@ pub async fn _send_command(mut cmd: LizCommand) -> tokio::io::Result<()> {
         socket = UnixStream::connect(socket_path).await?;
 
         // Serialize command and send it to daemon
-        let serialized: Vec<u8> = serde_json::to_vec(&cmd).expect("Failed to serialize command");
+        let serialized: Vec<u8> = cmd.serialize().expect("Failed to serialize command");
         socket.write_all(&serialized).await?;
         
         // Receive the response from the daemon
@@ -40,7 +40,7 @@ pub async fn _send_command(mut cmd: LizCommand) -> tokio::io::Result<()> {
         }
 
         // Deserialize the complete response
-        let response: BlueBirdResponse = serde_json::from_slice(&buffer).expect("Failed to deserialize response");
+        let response: BlueBirdResponse = BlueBirdResponse::deserialize(&buffer).expect("Failed to deserialize response");
         
         // Process the response
         let processed_response: Option<LizCommand> = process_response(&cmd, &response);
@@ -88,6 +88,10 @@ fn process_response(cmd: &LizCommand, response: &BlueBirdResponse) -> Option<Liz
             }
             return None
         }
+        "info" => {
+            process_response_of_info(response);
+            return None;
+        }
         _ => {
             return None
         }
@@ -118,4 +122,10 @@ fn process_response_of_run(response: &BlueBirdResponse) -> Option<LizCommand> {
             return None
         }
     }
+}
+
+// Print relative info of Liz
+fn process_response_of_info(response: &BlueBirdResponse) {
+    show_info(&response.results);
+    ();
 }
