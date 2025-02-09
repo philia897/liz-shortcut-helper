@@ -1,7 +1,7 @@
 use andthe::{BlueBirdResponse, LizCommand, StateCode};
 use serde::{Deserialize, Serialize};
 
-use crate::tools::{db::{DataTable, UserDataTable}, exec::execute_shortcut_ydotool, rhythm::Rhythm};
+use crate::tools::{db::{DataTable, UserDataTable}, exec::{execute_shortcut_enigo, execute_shortcut_ydotool}, rhythm::Rhythm};
 
 #[derive(Debug, Serialize, Deserialize)]
 pub struct Flute {
@@ -87,12 +87,22 @@ impl Flute {
                         results : vec!["BUG:".to_string(), "No keycode found on index:".to_string(), cmd.args[0].clone()]
                     }
                 }
-                if let Err(e) = execute_shortcut_ydotool(
-                            &keycode.unwrap(), self.rhythm.ydotool_interval_ms, &self.rhythm.ydotool_socket_path) {
-                    eprintln!("Failure: Fail to execute shortcut: {:?}", e);
-                    return BlueBirdResponse {
-                        code : StateCode::FAIL,
-                        results : vec!["Failure:".to_string(), format!("{}", e)]
+                if self.rhythm.ydotool_socket_path.is_empty() {
+                    if let Err(e) = execute_shortcut_enigo(&keycode.unwrap(), self.rhythm.interval_ms) {
+                        eprintln!("Enigo Failure: Fail to execute shortcut: {:?}", e);
+                        return BlueBirdResponse {
+                            code : StateCode::FAIL,
+                            results : vec!["Failure:".to_string(), format!("{}", e)]
+                        }
+                    }
+                } else {
+                    if let Err(e) = execute_shortcut_ydotool(
+                        &keycode.unwrap(), self.rhythm.interval_ms, &self.rhythm.ydotool_socket_path) {
+                        eprintln!("Ydotool Failure: Fail to execute shortcut: {:?}", e);
+                        return BlueBirdResponse {
+                            code : StateCode::FAIL,
+                            results : vec!["Failure:".to_string(), format!("{}", e)]
+                        }
                     }
                 }
                 let _ = self.music_sheet.hit_num_up(idx);
@@ -134,15 +144,7 @@ impl Flute {
         let r: &Rhythm = &self.rhythm;
         BlueBirdResponse{
             code : StateCode::OK,
-            results : vec![
-                "liz_path".to_string(), r.liz_path.clone(),
-                "user_sheets_path".to_string(), r.user_sheets_path.clone(),
-                "bluebird_socket_path".to_string(), r.socket_path.clone(),
-                "music_sheet_lock_path".to_string(), r.music_sheet_path.clone(),
-                "keymap_path".to_string(), r.keymap_path.clone(),
-                "persist_frequence_seconds".to_string(), r.persist_freq_s.to_string(),
-                "ydotool_socket_path".to_string(), r.socket_path.clone(),
-            ]
+            results : r.to_pretty_vec()
         }
     }
 

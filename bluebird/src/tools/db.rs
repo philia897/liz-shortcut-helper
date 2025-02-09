@@ -250,14 +250,14 @@ impl UserDataTable {
  * Convert shortcut string to key presses, using the keymap to map key to keycode
  * For example:
  * meta+pageup tab 123!@# tab ABC  
- * => 126.1 104.1 104.0 126.0 15.1 15.0 (str)type 123!@#(str) 15.1 15.0 (str)type ABC(str)
+ * => 126.1 104.1 104.0 126.0 15.1 15.0 [STR]type 123!@#[STR] 15.1 15.0 [STR]type ABC[STR]
  * Where keycode of meta is 126, pageup (104), tab (15)
  * type 123!@ means directly type these characters "123!@".
  */
 fn convert_shortcut_to_key_presses(shortcut: &str, key_event_codes: &HashMap<String, String>) -> Option<String> {
     let mut result = Vec::new();
 
-    let ss: Vec<&str> = shortcut.split("(str)").collect();
+    let ss: Vec<&str> = shortcut.split("[STR]").collect();
     
     for s in ss {
         if s.is_empty() {
@@ -265,7 +265,7 @@ fn convert_shortcut_to_key_presses(shortcut: &str, key_event_codes: &HashMap<Str
         }
         if s.starts_with("+") {
             let type_str: &str = &s[2..];
-            result.push(format!("(str)+ {}(str)", type_str.trim()));
+            result.push(format!("[STR]+ {}[STR]", type_str.trim()));
         } else {
             // Split the input by spaces
             let parts: Vec<&str> = s.split_whitespace().collect();
@@ -282,7 +282,6 @@ fn convert_shortcut_to_key_presses(shortcut: &str, key_event_codes: &HashMap<Str
                             result.push(format!("{}.1", event_code));
                         } else {
                             result.push(format!("{}.1", key));
-                            return None;
                         }
                     }
                     for key in keys.iter().rev() {
@@ -291,7 +290,6 @@ fn convert_shortcut_to_key_presses(shortcut: &str, key_event_codes: &HashMap<Str
                             result.push(format!("{}.0", event_code));
                         } else {
                             result.push(format!("{}.0", key));
-                            return None;
                         }
                     }
                 } else {
@@ -300,7 +298,7 @@ fn convert_shortcut_to_key_presses(shortcut: &str, key_event_codes: &HashMap<Str
                         result.push(format!("{}.1", event_code));
                         result.push(format!("{}.0", event_code));
                     } else {
-                        result.push(format!("(str)+ {}(str)", part.trim()));
+                        result.push(format!("[STR]+ {}[STR]", part.trim()));
                     }
                 }
             }

@@ -117,7 +117,6 @@ pub fn show_error(error_type: ErrorType, error_msg: &String) {
     }
 }
 
-//TODO: complete the manual, maybe import from one file and show by rofi or commandline.
 pub fn show_help() {
     let commands: Vec<(&str, &str, &str)> = vec![
         ("run", "", "Start liz and popup the shortcut helper."),
@@ -133,8 +132,6 @@ pub fn show_help() {
     for (command, args, description) in commands {
         println!("  {:<10} {:<12} {}", command, args, description);
     }
-
-    //println!("\nFor more information about a specific command, use `liz [COMMAND] --help`.");
 }
 
 pub fn show_info(items: &Vec<String>) {

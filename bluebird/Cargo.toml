@@ -16,4 +16,5 @@ signal-hook = "0.3"
 toml = "0.7"
 dirs = "4.0"
 andthe = { path = "../andthe" }
+enigo = "0.3.0"
 

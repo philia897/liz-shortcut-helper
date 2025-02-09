@@ -25,9 +25,9 @@
     },
     {
         "description":"Test: esc :set nu (alternative)",
-        "shortcut":"esc (str)+ :set nu",
+        "shortcut":"esc [STR]+ :set nu",
         "application":"Example",
-        "comment":"Test to run shortcut 'esc :set nu', using (str) to type string instead"
+        "comment":"Test to run shortcut 'esc :set nu', using [STR] to type string instead"
     },
     {
         "description":"Test: esc :set nu enter",
@@ -37,19 +37,19 @@
     },
     {
         "description":"Test: esc :set nu enter (alternative)",
-        "shortcut":"esc (str)+ :set nu (str) enter",
+        "shortcut":"esc [STR]+ :set nu [STR] enter",
         "application":"Example",
-        "comment":"Test to run shortcut 'esc :set nu enter', using (str) to type string instead"
+        "comment":"Test to run shortcut 'esc :set nu enter', using [STR] to type string instead"
     },
     {
         "description":"Welcome",
-        "shortcut":"(str)+ liz and the blue bird",
+        "shortcut":"[STR]+ liz and the blue bird",
         "application":"Welcome",
         "comment":"Welcom message"
     },
     {
         "description":"Hello world",
-        "shortcut":"(str)+ Hello World!",
+        "shortcut":"[STR]+ Hello World!",
         "application":"Welcome",
         "comment":"Welcom message 2"
     }

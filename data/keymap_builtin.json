@@ -1,0 +1,15 @@
+{
+    "esc": "esc",
+    "meta": "meta",
+    "leftbrace": "(",
+    "rightbrace": ")",
+    "equal": "=",
+    "minus": "-",
+    "comma": ",",
+    "dot": ".",
+    "slash": "/",
+    "semicolon": ";",
+    "apostrophe": "'",
+    "grave": "`",
+    "backslash": "\\"
+}
