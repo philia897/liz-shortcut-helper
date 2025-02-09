@@ -214,7 +214,7 @@ impl UserDataTable {
         let mut file = File::open(keymap_path).expect("Unable to open keymap file");
         let mut contents = String::new();
         file.read_to_string(&mut contents).expect("Unable to read keymap file");
-        let key_event_codes: HashMap<String, usize> = serde_json::from_str(&contents).expect("Unable to parse JSON");
+        let key_event_codes: HashMap<String, String> = serde_json::from_str(&contents).expect("Unable to parse JSON");
 
         let mut new_table = DataTable::new();
         for row in &self.data {
@@ -250,11 +250,11 @@ impl UserDataTable {
  * Convert shortcut string to key presses, using the keymap to map key to keycode
  * For example:
  * meta+pageup tab 123!@# tab ABC  
- * => 126.1 104.1 104.0 126.0 15.1 15.0 <str>type 123!@#<str> 15.1 15.0 <str>type ABC<str>
+ * => 126.1 104.1 104.0 126.0 15.1 15.0 (str)type 123!@#(str) 15.1 15.0 (str)type ABC(str)
  * Where keycode of meta is 126, pageup (104), tab (15)
  * type 123!@ means directly type these characters "123!@".
  */
-fn convert_shortcut_to_key_presses(shortcut: &str, key_event_codes: &HashMap<String, usize>) -> Option<String> {
+fn convert_shortcut_to_key_presses(shortcut: &str, key_event_codes: &HashMap<String, String>) -> Option<String> {
     let mut result = Vec::new();
 
     let ss: Vec<&str> = shortcut.split("(str)").collect();
@@ -265,7 +265,7 @@ fn convert_shortcut_to_key_presses(shortcut: &str, key_event_codes: &HashMap<Str
         }
         if s.starts_with("+") {
             let type_str: &str = &s[2..];
-            result.push(format!("<str>+ {}<str>", type_str.trim()));
+            result.push(format!("(str)+ {}(str)", type_str.trim()));
         } else {
             // Split the input by spaces
             let parts: Vec<&str> = s.split_whitespace().collect();
@@ -278,29 +278,29 @@ fn convert_shortcut_to_key_presses(shortcut: &str, key_event_codes: &HashMap<Str
                     let keys: Vec<&str> = part.split('+').collect();
                     for key in &keys {
                         let key: String = key.trim().to_lowercase();
-                        if let Some(&event_code) = key_event_codes.get(&key) {
+                        if let Some(event_code) = key_event_codes.get(&key) {
                             result.push(format!("{}.1", event_code));
                         } else {
-                            eprintln!("{} does not exist!", key);
+                            result.push(format!("{}.1", key));
                             return None;
                         }
                     }
                     for key in keys.iter().rev() {
                         let key: String = key.trim().to_lowercase();
-                        if let Some(&event_code) = key_event_codes.get(&key) {
+                        if let Some(event_code) = key_event_codes.get(&key) {
                             result.push(format!("{}.0", event_code));
                         } else {
-                            eprintln!("{} does not exist!", key);
+                            result.push(format!("{}.0", key));
                             return None;
                         }
                     }
                 } else {
                     let key = part.trim().to_lowercase();
-                    if let Some(&event_code) = key_event_codes.get(&key) {
+                    if let Some(event_code) = key_event_codes.get(&key) {
                         result.push(format!("{}.1", event_code));
                         result.push(format!("{}.0", event_code));
                     } else {
-                        result.push(format!("<str>+ {}<str>", part.trim()));
+                        result.push(format!("(str)+ {}(str)", part.trim()));
                     }
                 }
             }

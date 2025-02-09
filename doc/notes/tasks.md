@@ -17,3 +17,7 @@
 - Find a way to show the information about each shortcut including its comments, maybe add one argument of `liz run` like `liz run details`
 
 - Optimize the installation script, following an example like `lunarVim` to install by automatically `wget` a script and build.
+
+- Refactor the bluebird and liz code using `clap` to managing arguments
+
+- Run bluebird as one user service instead, for security.

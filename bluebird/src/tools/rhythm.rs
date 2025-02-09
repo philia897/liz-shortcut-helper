@@ -47,8 +47,8 @@ impl Rhythm {
     
         let content: String = fs::read_to_string(rhythm_path)?;
         let rhythm: Rhythm = toml::de::from_str(&content).unwrap_or_default();
-    
-        eprintln!("Reading Config:\n{:?}", rhythm);
+
+        println!("Reading Config:\n{:?}", rhythm);
 
         Ok(rhythm)
     }

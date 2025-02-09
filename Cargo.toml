@@ -4,5 +4,5 @@ resolver = "2"
 members = [
     "liz", 
     "andthe",
-    "bluebird", 
+    "bluebird",
 ]

@@ -12,6 +12,12 @@
         "comment":"Test to run shortcut 'ctrl+shift+c', the copy command in Zsh"
     },
     {
+        "description":"Test: a + b + c",
+        "shortcut":"a + b + c",
+        "application":"Example",
+        "comment":"Test to run shortcut 'a + b + c', in this case '+' will be a key instead of the connector"
+    },
+    {
         "description":"Test: esc :set nu",
         "shortcut":"esc :set space nu",
         "application":"Example",
