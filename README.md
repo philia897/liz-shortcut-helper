@@ -1,5 +1,7 @@
 # Liz Shortcut Helper
 
+**This project is now archived. Further development will be done in [liz-desktop](https://github.com/philia897/liz-desktop) instead. Liz-desktop is developed by Tauri2, with native GUI and shortcut executor.**
+
 A Rust-based helper for those who can not remember all the shortcuts (especially those rarely used ones), which supports:
 
  - Show shortcuts with great filtering function based on [Rofi](https://github.com/davatorium/rofi/)
